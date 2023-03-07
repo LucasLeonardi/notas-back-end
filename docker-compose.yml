@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres
+    volumes:
+      - ./script/createDB.sql:/docker-entrypoint-initdb.d/createDB.sql
+    environment:
+      POSTGRES_PASSWORD: "12345"
+      POSTGRES_DB: "notasDB"
+    ports:
+      - "5431:5432"
