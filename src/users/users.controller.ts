@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { ErrorHandling } from 'src/config/error-handling';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 
@@ -10,7 +11,11 @@ export class UsersController {
 
   @Post('create')
   async create(@Body() body: CreateUserDto){
-    return this.usersService.teste(body)
+    try {
+      return this.usersService.createUser(body)
+    } catch (error) {
+      new ErrorHandling(error);
+    } 
   }
 
 }
