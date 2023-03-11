@@ -15,22 +15,42 @@ export class UsersService {
     if(user){
       throw new HttpException("USER_ALREADY_EXISTS", 409);
     }
-    return await this.userRepository.save(user);
-    
+    userData.password = await this.authService.encryptPassword(userData.password);
+    let registerUser = await this.userRepository.save(userData);
+    delete registerUser.password;
+    return registerUser;
   }
 
   async login(userData: CreateUserDto){
-    let user = await this.userRepository.findOne({where: {name : userData.name}});
+    let user = await this.userRepository.findOne(
+      {
+        where: {name : userData.name},
+      }
+    );
     if(!user){
       throw new HttpException("USER_NOT_FOUND", 404);
     } 
-    if(user.password != userData.password){
+    if(await this.authService.validadePassword(userData.password, user.password)){
       throw new HttpException("WRONG_PASSWORD", 401);
     }
-    let JwtToken = await this.authService.login(user)
+    let JwtToken = await this.authService.login(user);
+    delete user.password;
     return {
       ...user,
-      token: JwtToken
-    }
+      token: JwtToken.access_token
+    };
+  }
+
+  async profile(userId: string){
+    let user = await this.userRepository.findOne(
+      {
+        where: {id : userId},
+        select: ["name", "id"]
+      }
+    );
+    if(!user){
+      throw new HttpException("USER_NOT_FOUND", 404);
+    };
+    return user;
   }
 }
