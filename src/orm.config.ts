@@ -1,4 +1,5 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { Note } from "./notes/notes.entity";
 import { User } from "./users/users.entity";
 
 export const config: TypeOrmModuleOptions = {
@@ -10,6 +11,7 @@ export const config: TypeOrmModuleOptions = {
   database: "notasDB",
   synchronize: true,
   entities: [
-    User
+    User,
+    Note,
   ]
 }

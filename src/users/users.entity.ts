@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Note } from "src/notes/notes.entity";
+import { BaseEntity, Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -10,4 +11,8 @@ export class User extends BaseEntity {
 
   @Column({type: "varchar", nullable:false})
   password: string;
+
+  @OneToMany(type => Note, notes => notes.id)
+  @JoinColumn({name: 'notes', referencedColumnName: 'id'})
+  notes: Note[];
 }
